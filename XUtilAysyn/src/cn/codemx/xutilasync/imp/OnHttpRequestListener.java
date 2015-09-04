@@ -1,7 +1,7 @@
 package cn.codemx.xutilasync.imp;
 
 /**
- * ÍøÂçÇëÇó¼àÌı
+ * ç½‘ç»œè¯·æ±‚ç›‘å¬
  * Created by MX on 2015/8/20.
  */
 public interface OnHttpRequestListener {

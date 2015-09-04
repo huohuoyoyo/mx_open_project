@@ -12,15 +12,15 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 
 /**
- * ÍøÂçÇëÇó»ùÀà
+ * ç½‘ç»œè¯·æ±‚åŸºç±»
  * Created by MX on 2015/8/20.
  */
 public abstract class BaseHttpRequest<T> {
 
     public static final int GET = 1;
     public static final int POST = 2;
-    private static final int REQUEST_SUCCESS = 1001;//ÍøÂçÇëÇó³É¹¦Âë
-    private static final int REQUEST_FAILURE = 1002;//ÍøÂçÇëÇóÊ§°ÜÂë
+    private static final int REQUEST_SUCCESS = 1001;//ç½‘ç»œè¯·æ±‚æˆåŠŸç 
+    private static final int REQUEST_FAILURE = 1002;//ç½‘ç»œè¯·æ±‚å¤±è´¥ç 
     private OnHttpRequestListener mListener;
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -43,23 +43,23 @@ public abstract class BaseHttpRequest<T> {
     };
 
 
-    // Æ´½Óurl
+    // æ‹¼æ¥url
     protected abstract String onPrepareUrl();
 
-    // GET·½Ê½»òÕßPOST·½Ê½
+    // GETæ–¹å¼æˆ–è€…POSTæ–¹å¼
     protected abstract int onPrepareType();
 
-    // ×é×°ÇëÇó²ÎÊı
+    // ç»„è£…è¯·æ±‚å‚æ•°
     protected abstract RequestParams onPrepareRequestParams();
 
-    // ½âÎöÊı¾İ
+    // è§£ææ•°æ®
     protected abstract T onParseResponse(String data);
 
     /**
-     * ÍøÂçÇëÇó
+     * ç½‘ç»œè¯·æ±‚
      *
-     * @param reqCode  ÇëÇó±ê¼Ç£¬ĞèÒª¾ÍÓÃ£¬²»ĞèÒª¾Í²»ÓÃ
-     * @param listener ÇëÇó¼àÌı
+     * @param reqCode  è¯·æ±‚æ ‡è®°ï¼Œéœ€è¦å°±ç”¨ï¼Œä¸éœ€è¦å°±ä¸ç”¨
+     * @param listener è¯·æ±‚ç›‘å¬
      */
     public void start(int reqCode, OnHttpRequestListener listener) {
         mListener = listener;
@@ -69,34 +69,29 @@ public abstract class BaseHttpRequest<T> {
     }
 
     /**
-     * ÍøÂçÇëÇó
+     * ç½‘ç»œè¯·æ±‚
      *
-     * @param reqCode    ÇëÇóÂë
-     * @param httpMethod ÇëÇó·½Ê½
+     * @param reqCode    è¯·æ±‚ç 
+     * @param httpMethod è¯·æ±‚æ–¹å¼
      */
     private void request(int reqCode, final int httpMethod) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                switch (httpMethod) {
-                    case GET:
-                        requestWithGet();
-                        break;
-                    case POST:
-                        RequestParams params = onPrepareRequestParams();
-                        if (params != null) {
-                            requestWithPost(params);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }).start();
 
+        switch (httpMethod) {
+            case GET:
+                requestWithGet();
+                break;
+            case POST:
+                RequestParams params = onPrepareRequestParams();
+                if (params != null) {
+                    requestWithPost(params);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
-    //GETÇëÇó
+    //GETè¯·æ±‚
     public void requestWithGet() {
         String url = onPrepareUrl();
         if (url == null || url.equals("")) {
@@ -107,12 +102,17 @@ public abstract class BaseHttpRequest<T> {
                 url,
                 new RequestCallBack<String>() {
                     @Override
-                    public void onSuccess(ResponseInfo<String> responseInfo) {
-                        T result = onParseResponse(responseInfo.result);
-                        Message msg = Message.obtain();
-                        msg.what = REQUEST_SUCCESS;
-                        msg.obj = result;
-                        mHandler.sendMessage(msg);
+                    public void onSuccess(final ResponseInfo<String> responseInfo) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                T result = onParseResponse(responseInfo.result);
+                                Message msg = Message.obtain();
+                                msg.what = REQUEST_SUCCESS;
+                                msg.obj = result;
+                                mHandler.sendMessage(msg);
+                            }
+                        }).start();
                     }
 
                     @Override
@@ -124,7 +124,7 @@ public abstract class BaseHttpRequest<T> {
                 });
     }
 
-    //POSTÇëÇó
+    //POSTè¯·æ±‚
     public void requestWithPost(RequestParams params) {
         String url = onPrepareUrl();
         if (url == null || url.equals("")) {
@@ -136,12 +136,17 @@ public abstract class BaseHttpRequest<T> {
                 params,
                 new RequestCallBack<String>() {
                     @Override
-                    public void onSuccess(ResponseInfo<String> responseInfo) {
-                        T result = onParseResponse(responseInfo.result);
-                        Message msg = Message.obtain();
-                        msg.what = REQUEST_SUCCESS;
-                        msg.obj = result;
-                        mHandler.sendMessage(msg);
+                    public void onSuccess(final ResponseInfo<String> responseInfo) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                T result = onParseResponse(responseInfo.result);
+                                Message msg = Message.obtain();
+                                msg.what = REQUEST_SUCCESS;
+                                msg.obj = result;
+                                mHandler.sendMessage(msg);
+                            }
+                        }).start();
                     }
 
                     @Override
