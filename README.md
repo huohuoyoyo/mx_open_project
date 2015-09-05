@@ -6,3 +6,5 @@
 1.XUtilAysyn：是通过XUtil网络请求包对网络GET或者POST请求的一种封装，可以让大家快速集成，简单开发。
 
 2.SQLiteHelper：数据封装，包含增、删、改、查。
+
+3.CustomTitle: 自定义title视图，比较简单，自己还可以扩展
